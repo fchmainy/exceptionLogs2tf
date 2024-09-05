@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Terraform Resource Generator</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify.min.js"></script>
+
+	<script>
+		async function generateResource() {
+			const auditLog = document.getElementById('audit_log').value;
+
+			const response = await fetch('/transform', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: auditLog
+			});
+
+			const data = await response.json();
+			const beautified = js_beautify(data.terraform_resource);
+			document.getElementById('result').value = beautified;
+		}
+	</script>
+</head>
+<body>
+	<section class="section">
+		<div class="container">
+			<h1 class=title">Terraform Generator For XC WAAP Exclusions</h1>
+			<form onsubmit="event.preventDefault(); generateResource();">
+				<div class="field">
+					<label class="label" for="audit_log">JSON Audit Log:</label>
+					<div class="control">
+						<textarea class="textarea" id="audit_log" name="audit_log" rows="20"></textarea>
+						<!--input class="input" type="text" rows="20" id="audit_log" name="audit_log" required-->
+					</div>
+				</div>
+				<div class="control">
+					<button class="button is-primary" type="submit">Generate</button>
+				</div>
+			</form>
+
+			<h2 class="titl is-4">Generated Terraform Resource:</h2>
+			<div class="field">
+				<div class="control">
+					<textarea class="textarea" id="result" rows="20" readonly></textarea>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
