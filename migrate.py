@@ -21,7 +21,7 @@ def get_terraform_resource():
         path_regex = rule.get('path_regex')
         methods = rule.get('methods', [])
         metadata_items = rule.get('metadata', {})
-        metadata = "\n".join([f" {key} := \"{value}\"" for key, value in metadata_items.items()])
+        metadata = "\n".join([f" {key} = \"{value}\"" for key, value in metadata_items.items()])
         detection_control = rule.get('app_firewall_detection_control', {})
         exclude_signatures = detection_control.get('exclude_signature_contexts', [])
         ctx = ""
@@ -39,9 +39,9 @@ def get_terraform_resource():
                     "metadata {",
                         "{}".format(metadata),
                     "}",
-                    'methods = {}'.format(methods),
-                    'exact_value = "{}"'.format(exact_value),
-                    'path_regex = "{}"'.format(path_regex),
+                    'methods = {}'.format(methods).replace("'", '"'),
+                    '\nexact_value = "{}"'.format(exact_value),
+                    'path_regex = "{}"'.format(path_regex).replace("\\", "\\\\"),
                     "app_firewall_detection_control {",
                     '    {}'.format(ctx),
                     "}",
